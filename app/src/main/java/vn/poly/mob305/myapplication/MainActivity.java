@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -22,8 +23,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent myService =
+                new Intent(this
+                ,MyService.class);
+        findViewById(R.id.btnStartService).setOnClickListener(v -> {
+            myService.putExtra("name",
+                    "Huy");
+            myService.putExtra("Age",
+                    34);
+            startService(myService);
+        });
+
+        findViewById(R.id.btnStopService).setOnClickListener(v -> {
+            stopService(myService);
+        });
+
         // gọi thử câu lệnh bật thông báo
-        showNotification(this,"hello","OK OK",
+        showNotification(this, "hello", "OK OK",
                 222);
     }
 
@@ -45,17 +61,17 @@ public class MainActivity extends AppCompatActivity {
         // kiểm tra xem user đã cấp quyền bật thông báo cho ứng dụng chưa
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.POST_NOTIFICATIONS)
-         == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             // Hiển thị notification
             // nếu có thì bật thông báo
             notificationManager.notify(notificationId, builder.build());
-        }else {
+        } else {
             // chưa có thì bật dialog xin quyền
             // 999 là requestCode tự định nghĩa để bắt sự kiện
             // người dùng đồng ý hay từ chối
-            ActivityCompat.requestPermissions(this,new String[]{
+            ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.POST_NOTIFICATIONS
-            },999);
+            }, 999);
         }
     }
 
@@ -65,12 +81,12 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 999) {
             // kiểm tra xem ng dùng bấm ok hay từ chối qua
             // requestCode định nghĩa bên trên
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Ban da dong y cho bat thong bao !!!",
                         Toast.LENGTH_SHORT).show();
-                showNotification(this,"hello","OK OK",
+                showNotification(this, "hello", "OK OK",
                         222);
-            }else {
+            } else {
                 Toast.makeText(this, "Chuc nang nay can dc cho phep de hoat dong!!!"
                         , Toast.LENGTH_SHORT).show();
             }
